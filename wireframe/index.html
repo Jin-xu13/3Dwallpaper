@@ -312,6 +312,61 @@
       
       function goToPage(n) { renderPage(n); }
       
+      // 3D 倾斜绑定（hover:rotateX/Y+scale；触屏降级；无障碍与降噪）
+      function bindTiltOnGrid(){
+        const reduceQuery = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+        const reduce = !!(reduceQuery && reduceQuery.matches);
+        if (!grid || reduce) return;
+        const supportsFinePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const cards = Array.from(grid.querySelectorAll('.card'));
+        if (!cards.length) return;
+
+        if (!supportsFinePointer){
+          // 触屏或粗指针：轻微增强阴影作为反馈
+          cards.forEach(card => {
+            card.addEventListener('pointerdown', (e) => {
+              if (e.pointerType !== 'mouse') {
+                card.classList.add('tilt-touch');
+                setTimeout(() => card.classList.remove('tilt-touch'), 220);
+              }
+            }, { passive: true });
+          });
+          return;
+        }
+
+        const MAX_TILT = 8; // 度
+        const SCALE = 1.02;
+
+        cards.forEach(card => {
+          const ph = card.querySelector('.ph');
+          if (!ph) return;
+          let rect = null;
+          let raf = 0;
+          const reset = () => {
+            if (raf) cancelAnimationFrame(raf);
+            ph.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
+          };
+          const onMove = (ev) => {
+            if (ev.pointerType && ev.pointerType !== 'mouse') return; // 仅桌面鼠标
+            // 键盘聚焦例外：当卡片内存在活动焦点时，不触发 tilt
+            if (document.activeElement && card.contains(document.activeElement)) return;
+            rect = rect || card.getBoundingClientRect();
+            const b = rect;
+            const x = (ev.clientX - b.left) / b.width; // 0..1
+            const y = (ev.clientY - b.top) / b.height; // 0..1
+            const rx = (0.5 - y) * (MAX_TILT * 2);
+            const ry = (x - 0.5) * (MAX_TILT * 2);
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(() => {
+              ph.style.transform = `perspective(800px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${SCALE})`;
+            });
+          };
+          card.addEventListener('pointerenter', () => { rect = card.getBoundingClientRect(); });
+          card.addEventListener('pointermove', onMove);
+          card.addEventListener('pointerleave', () => { rect = null; reset(); });
+        });
+      }
+      
       // 绑定分页控件
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
