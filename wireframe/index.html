@@ -42,11 +42,14 @@
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       
       /* 比例盒：默认 9:16；桌面模式切到 16:9，并带平滑过渡 */
-      #grid .ph { position: relative; overflow: hidden; transition: transform .45s ease, box-shadow .45s ease; border-radius: inherit; }
+      #grid .ph { position: relative; overflow: hidden; transition: transform .12s ease-out, box-shadow .18s ease; border-radius: inherit; will-change: transform; transform-style: preserve-3d; }
       #grid .ph::before { content: ''; display: block; width: 100%; padding-top: 177.78%; transition: padding-top .45s ease; }
       #grid[data-type="desktop"] .ph::before { padding-top: 56.25%; }
       /* 强制占位与描边伪元素继承较大的圆角，确保角部描边可见 */
       #grid .ph, #grid .ph::after { border-radius: var(--radius-xl) !important; }
+      /* 透视容器：仅作用于被倾斜的占位元素，不影响悬浮信息条 */
+      #grid .tilt-parent { perspective: 800px; }
+      @media (prefers-reduced-motion: reduce) { #grid .ph { transition: none !important; } }
       
       /* 切换动画时给卡片和占位图轻微强化（缩放微调为更自然） */
       #grid[data-anim="1"] .ph { transform: scale(1.013); }
@@ -117,7 +120,8 @@
       /* 令牌映射：阴影 */
       .shadow-soft { box-shadow: var(--shadow-soft) !important; }
       .shadow-softlg { box-shadow: var(--shadow-soft-lg) !important; }
-      
+      /* 触屏降级：轻微增强阴影 */
+      #grid .card.tilt-touch { box-shadow: var(--shadow-soft-lg) !important; }
       /* 令牌映射：卡片/头部/分页边框与控件边框 */
       .card { border-color: var(--border-soft) !important; background-color: var(--surface) !important; }
       #pagiBar { border-color: var(--border-strong) !important; background-color: var(--surface) !important; }
@@ -229,19 +233,20 @@
         const card = document.createElement('div');
         card.className = 'card group text-left w-full rounded-2xl overflow-hidden shadow-soft hover:shadow-softlg transition-shadow border';
         card.innerHTML = `
-          <div class="relative w-full">
-            <div class="ph w-full"></div>
-            <div class="absolute inset-0 flex items-end justify-stretch pb-2 pointer-events-none">
-              <div class="info-bar mx-2 rounded-full border px-3.5 py-2 text-xs w-full flex items-center justify-between opacity-0 translate-y-1 transition-all duration-300 backdrop-blur-sm group-hover:opacity-100 group-hover:translate-y-0 pointer-events-auto" style="transition-delay:80ms">
-                <div class="flex items-center gap-1.5 flex-wrap pr-2">
-                  <span class="px-1.5 py-0.5 rounded border border-white/80 text-white/90">风景</span>
-                  <span class="px-1.5 py-0.5 rounded border border-white/80 text-white/90">夜景</span>
-                </div>
-                <span class="whitespace-nowrap text-white/90">★ 80 · ⬇ 120</span>
-              </div>
-            </div>
-            <a href="detail.html" class="go-btn absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full border text-sm opacity-0 group-hover:opacity-100 transition">前往</a>
-          </div>
+-          <div class="relative w-full">
++          <div class="relative w-full tilt-parent">
+             <div class="ph w-full"></div>
+             <div class="absolute inset-0 flex items-end justify-stretch pb-2 pointer-events-none">
+               <div class="info-bar mx-2 rounded-full border px-3.5 py-2 text-xs w-full flex items-center justify-between opacity-0 translate-y-1 transition-all duration-300 backdrop-blur-sm group-hover:opacity-100 group-hover:translate-y-0 pointer-events-auto" style="transition-delay:80ms">
+                 <div class="flex items-center gap-1.5 flex-wrap pr-2">
+                   <span class="px-1.5 py-0.5 rounded border border-white/80 text-white/90">风景</span>
+                   <span class="px-1.5 py-0.5 rounded border border-white/80 text-white/90">夜景</span>
+                 </div>
+                 <span class="whitespace-nowrap text-white/90">★ 80 · ⬇ 120</span>
+               </div>
+             </div>
+             <a href="detail.html" class="go-btn absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full border text-sm opacity-0 group-hover:opacity-100 transition">前往</a>
+           </div>
         `;
         return card;
       };
@@ -254,6 +259,8 @@
         const frag = document.createDocumentFragment();
         for (let i = start; i <= end; i++) frag.appendChild(makeCard(i));
         grid.appendChild(frag);
+        // 绑定卡片 3D 倾斜交互
+        bindTiltOnGrid();
         updatePaginator();
         adjustGridColumns();
       }
