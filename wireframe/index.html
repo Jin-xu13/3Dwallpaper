@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3Dwallpaper · Wireframe</title>
+    <script>
+      // Tailwind Play CDN config
+      window.tailwind = {
+        config: {
+          darkMode: 'class',
+          theme: {
+            extend: {
+              colors: {
+                brand: {
+                  500: '#3B82F6', // blue-500
+                  600: '#2563EB', // blue-600
+                },
+              },
+              boxShadow: {
+                soft: '0 10px 20px rgba(0,0,0,0.08)',
+                softlg: '0 14px 28px rgba(0,0,0,0.12)'
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <script>(function(){try{const stored=localStorage.getItem('theme');const prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;const html=document.documentElement;if(stored==='dark'||(!stored&&prefersDark)){html.classList.add('dark');}else{html.classList.remove('dark');}}catch(e){/* ignore */}})();</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles/tokens.css">
+    <style>
+      /* 统一首页占位背景为 CSS 变量 */
+      #grid .ph { background: var(--ph-bg); }
+      
+      /* 背景：浅色为纯色，深色为渐变 */
+      body { background: var(--body-bg); }
+      html.dark body { background: var(--body-bg); }
+      
+      /* 自定义滚动隐藏的横向滚动条（仅线框演示） */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      /* 比例盒：默认 9:16；桌面模式切到 16:9，并带平滑过渡 */
+      #grid .ph { position: relative; overflow: hidden; transition: transform .45s ease, box-shadow .45s ease; border-radius: inherit; }
+      #grid .ph::before { content: ''; display: block; width: 100%; padding-top: 177.78%; transition: padding-top .45s ease; }
+      #grid[data-type="desktop"] .ph::before { padding-top: 56.25%; }
+      /* 强制占位与描边伪元素继承较大的圆角，确保角部描边可见 */
+      #grid .ph, #grid .ph::after { border-radius: var(--radius-xl) !important; }
+      
+      /* 切换动画时给卡片和占位图轻微强化（缩放微调为更自然） */
+      #grid[data-anim="1"] .ph { transform: scale(1.013); }
+      #grid[data-anim="1"] .card { box-shadow: var(--shadow-soft-lg); }
+      
+      /* 根据类型控制列数：mobile 在 lg 下为 4 列，desktop 在 lg 下为 3 列 */
+      #grid.type-mobile { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      @media (min-width: 640px){ #grid.type-mobile { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+      @media (min-width: 1024px){ #grid.type-mobile { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+      #grid.type-desktop { grid-template-columns: repeat(1, minmax(0,1fr)); }
+      @media (min-width: 640px){ #grid.type-desktop { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+      @media (min-width: 1024px){ #grid.type-desktop { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+      
+      /* 激活芯片：浅色强制粉色；深色同色，去除外扩光晕 */
+      .chip { background-color: var(--surface); border-color: var(--border-soft); color: var(--text-primary); transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease, border-color .18s ease; }
+      .chip.active { background-color: #FBADBA !important; border-color: #FBADBA !important; color: #111827 !important; transform: scale(1.03); }
+      html.dark .chip.active { background-color: #FBADBA !important; border-color: #FBADBA !important; color: #111827 !important; /* 去除暗色外扩光晕 */ box-shadow: none !important; transform: scale(1.03); }
+      
+      /* 顶部栏：70%白 + 粒度更粗的磨砂纹理（浅色）；深色关闭纹理 */
+      header {
+        background-color: rgba(255,255,255,0.70) !important;
+        background-image: radial-gradient(rgba(255,255,255,0.24) 1.6px, transparent 1.6px), radial-gradient(rgba(0,0,0,0.06) 1.2px, transparent 1.2px);
+        background-size: 14px 14px, 22px 22px;
+        background-position: 0 0, 9px 9px;
+        background-blend-mode: overlay;
+        border-color: var(--border-soft) !important;
+      }
+      html.dark header { background-image: none; background-color: rgba(255,255,255,0.18) !important; }
+      /* 深色模式：顶部 Logo 与右上角文字强制白色，提升对比 */
+      html.dark header .brand, html.dark header nav a, html.dark header #themeToggle { color: #fff !important; }
+      
+      /* 搜索框背景：统一为 70% 白 */
+      input#search { background-color: rgba(255,255,255,0.70) !important; border-color: var(--border-strong) !important; }
+      
+      /* 信息条与"前往"按钮：黑底白字，跨浅/深模式一致（延迟精确 80ms） */
+      #grid .info-bar { 
+        background-color: rgba(0,0,0,0.60) !important; 
+        color: #fff !important; 
+        border-color: rgba(255,255,255,0.18) !important;
+        box-shadow: 0 0 5px rgba(255,255,255,0.6);
+        transition: opacity .3s ease .08s, transform .3s ease .08s;
+      }
+      #grid .go-btn { 
+        background-color: rgba(0,0,0,0.65) !important; 
+        color: #fff !important; 
+        border-color: rgba(255,255,255,0.25) !important;
+      }
+      
+      /* 立体描边：左/上白（变量），右/下黑（浅色0.18/深色0.28）；线宽2px；圆角继承 */
+      #grid .ph::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2;
+        box-sizing: border-box;
+        border-top: 2px solid var(--elev-outline-top-left);
+        border-left: 2px solid var(--elev-outline-top-left);
+        border-right: 2px solid var(--elev-outline-bottom-right);
+        border-bottom: 2px solid var(--elev-outline-bottom-right);
+        border-radius: inherit;
+      }
+      
+      /* 分页器：支持轻隐/浮现 */
+      #paginator { transition: transform .25s ease, opacity .25s ease; }
+      #paginator.hide { transform: translateY(120%); opacity: .65; }
+      
+      /* 令牌映射：阴影 */
+      .shadow-soft { box-shadow: var(--shadow-soft) !important; }
+      .shadow-softlg { box-shadow: var(--shadow-soft-lg) !important; }
+      
+      /* 令牌映射：卡片/头部/分页边框与控件边框 */
+      .card { border-color: var(--border-soft) !important; background-color: var(--surface) !important; }
+      #pagiBar { border-color: var(--border-strong) !important; background-color: var(--surface) !important; }
+      #paginator button { border-color: var(--border-strong) !important; background-color: var(--surface) !important; }
+      
+      /* 令牌映射：圆角（全局轻量覆盖） */
+      .rounded-xl { border-radius: var(--radius-lg) !important; }
+      .rounded-2xl { border-radius: var(--radius-xl) !important; }
+    </style>
+  </head>
+  <body class="text-gray-900 dark:text-gray-100 min-h-screen">
+    <div id="app" class="min-h-screen flex flex-col">
+      <!-- Header -->
+      <header class="sticky top-0 z-50 border-b backdrop-blur supports-backdrop-blur">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <!-- 左：文字Logo -->
+          <div class="brand text-xl font-bold tracking-wide select-none">3Dwallpaper</div>
+          <!-- 中：居中定宽搜索框（桌面 600px / 移动端全宽） -->
+          <div class="flex-1 hidden md:flex items-center justify-center">
+            <div class="w-full max-w-[600px]">
+              <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"/></svg>
+                <input id="search" type="search" placeholder="搜索壁纸、作者或标签" class="w-full rounded-full border pl-10 pr-24 py-2 outline-none focus:ring-2 focus:ring-brand-500/60 placeholder:text-gray-400 dark:placeholder:text-gray-400" />
+                <button class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-brand-600 text-white text-sm hover:bg-brand-500" aria-label="搜索"></button>
+              </div>
+            </div>
+          </div>
+          <!-- 右：入口占位 + 主题切换 -->
+          <div class="flex items-center gap-2">
+            <nav class="hidden sm:flex items-center gap-3 text-sm opacity-80">
+              <a class="hover:opacity-100" href="#">收藏</a>
+              <a class="hover:opacity-100" href="#">下载中心</a>
+              <a class="hover:opacity-100" href="#">登录</a>
+            </nav>
+            <button id="themeToggle" class="px-3 py-1.5 rounded-full border text-sm backdrop-blur">深/浅</button>
+          </div>
+        </div>
+        <!-- 移动端搜索（全宽） -->
+        <div class="md:hidden max-w-6xl mx-auto px-4 pb-3">
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"/></svg>
+            <input id="search" type="search" placeholder="搜索壁纸、标签" class="w-full rounded-full border pl-10 pr-24 py-2 outline-none focus:ring-2 focus:ring-brand-500/60 placeholder:text-gray-400 dark:placeholder:text-gray-400" />
+            <button class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-brand-600 text-white text-sm hover:bg-brand-500" aria-label="搜索"></button>
+          </div>
+        </div>
+        <!-- 筛选 Chips：仅两项（手机壁纸 / 桌面壁纸） -->
+        <div class="border-t">
+          <div class="max-w-6xl mx-auto px-4 py-2">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+              <button class="chip active px-3 py-1.5 rounded-full border text-sm" data-type="mobile" data-active="true">手机壁纸</button>
+              <button class="chip px-3 py-1.5 rounded-full border text-sm" data-type="desktop">桌面壁纸</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main -->
+      <main class="flex-1">
+        <div class="max-w-6xl mx-auto px-4 pt-6 pb-16">
+          <!-- 网格：中密度（桌面gap24/平板20/手机16） -->
+          <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+            <!-- 占位卡片（wireframe）-->
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="max-w-6xl mx-auto px-4 py-10 text-xs opacity-70">
+        © 2025 3Dwallpaper · 线框演示。图片版权归原作者所有。
+      </footer>
+    </div>
+
+    <!-- 固定底部悬浮分页条（footer 之后、script 之前） -->
+    <div id="paginator" class="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 will-change-transform">
+      <div id="pagiBar" class="flex items-center gap-2 rounded-full border backdrop-blur px-3 py-2 shadow-soft">
+        <button id="prevBtn" class="px-2.5 py-1 rounded-full border text-sm">上一页</button>
+        <div id="pageNumbers" class="flex items-center gap-1 px-1"></div>
+        <button id="nextBtn" class="px-2.5 py-1 rounded-full border text-sm">下一页</button>
+        <span class="mx-2 text-xs opacity-70 hidden sm:inline">共 <span id="totalPagesEl">0</span> 页</span>
+        <input id="pageInput" type="number" min="1" class="w-14 text-sm px-2 py-1 rounded border hidden sm:inline-block" />
+        <button id="gotoBtn" class="px-2 py-1 rounded-full border text-sm hidden sm:inline-block">跳转</button>
+        <button id="pagiCollapse" class="hidden px-2 py-1 rounded-full border text-sm sm:hidden">收起</button>
+      </div>
+    </div>
+    <!-- 移动端折叠浮球（禁用：保持分页条始终可见） -->
+    <button id="pagiFab" class="hidden fixed bottom-3 right-3 z-50 w-12 h-12 rounded-full bg-brand-600 text-white shadow-soft">页</button>
+
+    <script>
+      // 主题切换
+      const themeBtn = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      if (themeBtn) themeBtn.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        try { localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {}
+      });
+      
+      // 网格、分页、数据模拟
+      const grid = document.getElementById('grid');
+      if (grid) grid.dataset.type = 'mobile'; // 默认手机 9:16
+      
+      const PAGE_SIZE = 12;
+      const TOTAL_ITEMS = 60; // 线框模拟
+      let currentPage = 1;
+      const totalPages = Math.ceil(TOTAL_ITEMS / PAGE_SIZE);
+      const totalPagesEl = document.getElementById('totalPagesEl');
+      
+      // 卡片模板：加入新信息条结构（左侧标签+右侧收藏下载量）
+      const makeCard = (i) => {
+        const card = document.createElement('div');
+        card.className = 'card group text-left w-full rounded-2xl overflow-hidden shadow-soft hover:shadow-softlg transition-shadow border';
+        card.innerHTML = `
+          <div class="relative w-full">
+            <div class="ph w-full"></div>
+            <div class="absolute inset-0 flex items-end justify-stretch pb-2 pointer-events-none">
+              <div class="info-bar mx-2 rounded-full border px-3.5 py-2 text-xs w-full flex items-center justify-between opacity-0 translate-y-1 transition-all duration-300 backdrop-blur-sm group-hover:opacity-100 group-hover:translate-y-0 pointer-events-auto" style="transition-delay:80ms">
+                <div class="flex items-center gap-1.5 flex-wrap pr-2">
+                  <span class="px-1.5 py-0.5 rounded border border-white/80 text-white/90">风景</span>
+                  <span class="px-1.5 py-0.5 rounded border border-white/80 text-white/90">夜景</span>
+                </div>
+                <span class="whitespace-nowrap text-white/90">★ 80 · ⬇ 120</span>
+              </div>
+            </div>
+            <a href="detail.html" class="go-btn absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full border text-sm opacity-0 group-hover:opacity-100 transition">前往</a>
+          </div>
+        `;
+        return card;
+      };
+      
+      function renderPage(page) {
+        currentPage = Math.max(1, Math.min(totalPages, page));
+        grid.innerHTML = '';
+        const start = (currentPage - 1) * PAGE_SIZE + 1;
+        const end = Math.min(TOTAL_ITEMS, start + PAGE_SIZE - 1);
+        const frag = document.createDocumentFragment();
+        for (let i = start; i <= end; i++) frag.appendChild(makeCard(i));
+        grid.appendChild(frag);
+        updatePaginator();
+        adjustGridColumns();
+      }
+      
+      function updatePaginator() {
+        if (totalPagesEl) totalPagesEl.textContent = String(totalPages);
+        const cont = document.getElementById('pageNumbers');
+        if (!cont) return;
+        cont.innerHTML = '';
+        const isSmall = window.matchMedia('(max-width: 640px)').matches;
+
+        const createBtn = (n, isActive = false) => {
+          const b = document.createElement('button');
+          b.className = 'px-2.5 py-1 rounded-full border text-sm ' + (isActive ? 'bg-brand-600 text-white border-brand-600' : '');
+          b.textContent = String(n);
+          b.disabled = isActive;
+          if (!b.disabled) b.addEventListener('click', () => goToPage(n));
+          return b;
+        };
+
+        if (isSmall) {
+          const s = document.createElement('span');
+          s.className = 'text-sm px-1';
+          s.textContent = `${currentPage} / ${totalPages}`;
+          cont.appendChild(s);
+        } else {
+          const add = (el) => cont.appendChild(el);
+          const addEllipsis = () => { const s = document.createElement('span'); s.className = 'px-1 text-sm opacity-60'; s.textContent = '…'; cont.appendChild(s); };
+          const pushRange = (s, e) => { for (let n = s; n <= e; n++) add(createBtn(n, n === currentPage)); };
+
+          if (totalPages <= 7) {
+            pushRange(1, totalPages);
+          } else {
+            add(createBtn(1, currentPage === 1));
+            if (currentPage > 3) addEllipsis();
+            const s = Math.max(2, currentPage - 1);
+            const e = Math.min(totalPages - 1, currentPage + 1);
+            pushRange(s, e);
+            if (currentPage < totalPages - 2) addEllipsis();
+            add(createBtn(totalPages, currentPage === totalPages));
+          }
+        }
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        if (prevBtn) prevBtn.disabled = currentPage === 1;
+        if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+      }
+      
+      function goToPage(n) { renderPage(n); }
+      
+      // 绑定分页控件
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const pageInput = document.getElementById('pageInput');
+      const gotoBtn = document.getElementById('gotoBtn');
+      prevBtn && prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+      nextBtn && nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+      if (gotoBtn && pageInput) {
+        gotoBtn.addEventListener('click', () => { const v = parseInt(pageInput.value, 10); if (!Number.isNaN(v)) goToPage(v); });
+        pageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const v = parseInt(pageInput.value, 10); if (!Number.isNaN(v)) goToPage(v); } });
+      }
+      
+      // 初始化首页
+      renderPage(1);
+      
+      // 列数按类型调整（mobile: lg 4列；desktop: lg 3列）
+      function adjustGridColumns(){
+        const isMobileType = (grid.dataset.type === 'mobile');
+        grid.classList.toggle('type-mobile', isMobileType);
+        grid.classList.toggle('type-desktop', !isMobileType);
+      }
+      adjustGridColumns();
+      
+      // 筛选 chips：切换 data-type，触发比例过渡动画（不重新渲染）
+      const chips = document.querySelectorAll('.chip');
+      chips.forEach(ch => ch.addEventListener('click', () => {
+        // 取消其它项激活态，并同步移除 data-active，避免 utility 类仍然生效导致文字变白
+        chips.forEach(c => { c.classList.remove('active'); c.removeAttribute('data-active'); });
+        // 当前项设为激活，并写入 data-active
+        ch.classList.add('active');
+        ch.setAttribute('data-active', 'true');
+        grid.dataset.type = ch.dataset.type === 'desktop' ? 'desktop' : 'mobile';
+        // 触发过渡动画
+        grid.setAttribute('data-anim', '1');
+        adjustGridColumns();
+        setTimeout(() => grid.removeAttribute('data-anim'), 500);
+      }));
+      
+      // 移动端：分页器向下滚动轻隐、向上滚动浮现的自动隐藏逻辑
+      const isSmallScreen = () => window.matchMedia('(max-width: 640px)').matches;
+      let lastY = window.scrollY;
+      let ticking = false;
+      
+      window.addEventListener('scroll', () => {
+        if (!isSmallScreen()) return; // 仅移动端
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            const y = window.scrollY;
+            const down = y > lastY && y > 40; // 下滑且非顶部
+            const pagi = document.getElementById('paginator');
+            if (pagi) {
+              pagi.classList.toggle('hide', !!down);
+            }
+            lastY = y;
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    </script>
+  </body>
+</html>

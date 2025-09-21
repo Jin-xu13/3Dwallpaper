@@ -1,0 +1,77 @@
+/* Design tokens (Wireframe) */
+
+:root {
+  /* Brand */
+  --brand-500: #3B82F6;
+  --brand-600: #2563EB;
+
+  /* Body */
+  --body-bg: #F8F8F5;
+
+  /* Surfaces */
+  --surface: rgba(255,255,255,0.80);
+  --surface-muted: rgba(255,255,255,0.70);
+
+  /* Borders */
+  --border-soft: rgba(0,0,0,0.05);
+  --border-strong: rgba(0,0,0,0.12);
+
+  /* Text */
+  --text-primary: #111827; /* gray-900 */
+  --text-muted: rgba(17,24,39,0.70);
+
+  /* Overlay & Backdrop */
+  --overlay-scrim: rgba(0,0,0,0.60);
+
+  /* Placeholder (used by image/card placeholders) */
+  --ph-bg: rgba(229,231,235,0.70);
+  --ph-bg-hover: rgba(229,231,235,0.85);
+
+  /* Elevation outline (bevel for placeholders) */
+  --elev-outline-top-left: rgba(255,255,255,1);
+  --elev-outline-bottom-right: rgba(0,0,0,0.18);
+
+  /* Shadows */
+  --shadow-soft: 0 10px 20px rgba(0,0,0,0.08);
+  --shadow-soft-lg: 0 14px 28px rgba(0,0,0,0.12);
+  /* White glow for info bars */
+  --glow-info: 0 0 10px rgba(255,255,255,0.60);
+
+  /* Radii (for optional custom CSS usage) */
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+html.dark {
+  /* Body */
+  --body-bg: linear-gradient(180deg, #000616 0%, #4A3F4A 100%);
+
+  /* Surfaces */
+  --surface: rgba(255,255,255,0.05);
+  --surface-muted: rgba(255,255,255,0.10);
+
+  /* Borders */
+  --border-soft: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.20);
+
+  /* Text */
+  --text-primary: #F3F4F6; /* gray-100 */
+  --text-muted: rgba(243,244,246,0.70);
+
+  /* Overlay & Backdrop */
+  --overlay-scrim: rgba(0,0,0,0.60);
+
+  /* Placeholder */
+  /* 改回原本偏灰风格，并提高不透明度以增强可见度 */
+  --ph-bg: rgba(229,231,235,0.35);
+  --ph-bg-hover: rgba(229,231,235,0.45);
+
+  /* Elevation outline */
+  --elev-outline-top-left: rgba(255,255,255,0.90);
+  --elev-outline-bottom-right: rgba(0,0,0,0.28);
+
+  /* White glow for info bars */
+  --glow-info: 0 0 10px rgba(255,255,255,0.60);
+}
+
+/* Tip: 渐进式接入，优先用 --ph-bg / --border-soft / --surface / --text-primary 等核心令牌，逐步替换散落的硬编码值。 */
