@@ -52,27 +52,42 @@
       /* 深色模式：顶部 Logo 与右上角文字强制白色，提升对比 */
       html.dark header .text-lg, html.dark header a, html.dark header #themeToggle { color: #fff !important; }
       header .rounded-full.border { background-color: var(--surface); border-color: var(--border-soft); color: var(--text-primary); }
-      /* 侧栏卡片：底色统一为纯白，文本统一深灰，提高可读性 */
-      aside.rounded-2xl { border-color: var(--border-soft) !important; background-color: #ffffff !important; }
-      aside.rounded-2xl, aside.rounded-2xl * { color: #111827 !important; }
+      /* 侧栏卡片：浅色纯白 + 深灰字；深色深色底 + 白字 */
+      html:not(.dark) aside.rounded-2xl { border-color: var(--border-soft) !important; background-color: #ffffff !important; }
+      html:not(.dark) aside.rounded-2xl, html:not(.dark) aside.rounded-2xl * { color: #111827 !important; }
+      html.dark aside.rounded-2xl { background-color: rgba(0,0,0,0.35) !important; border-color: var(--border-soft) !important; }
+      html.dark aside.rounded-2xl, html.dark aside.rounded-2xl * { color: #fff !important; }
       /* 推荐卡片容器：维持表层色，但描边统一 */
       section .group.rounded-xl { border-color: var(--border-soft) !important; background-color: var(--surface) !important; }
       /* 下载弹窗：半透明遮罩（保留页面可见），面板保持不透明 */
-       #downloadModal .scrim { background: var(--overlay-scrim) !important; }
-       /* 保障层级：遮罩在下，内容在上 */
-       #downloadModal > .scrim { z-index: 0; }
-       #downloadModal > .flex { z-index: 1; }
-       /* 弹窗面板背景与页面统一（浅色米白 #F8F8F5 / 深色渐变与页面一致），保持不透明 */
-       #downloadModal .rounded-2xl { background: var(--body-bg) !important; border-color: var(--border-soft) !important; }
-       #downloadModal .relative { background-color: var(--surface-muted) !important; }
+      #downloadModal .scrim { background: var(--overlay-scrim) !important; }
+      /* 保障层级：遮罩在下，内容在上 */
+      #downloadModal > .scrim { z-index: 0; }
+      #downloadModal > .flex { z-index: 1; }
+      /* 弹窗面板背景与页面统一（浅色米白 #F8F8F5 / 深色渐变与页面一致），保持不透明 */
+      #downloadModal .rounded-2xl { background: var(--body-bg) !important; border-color: var(--border-soft) !important; }
+      #downloadModal .relative { background-color: var(--surface-muted) !important; }
+      /* 修复左右面板底色不一致：仅左侧容器继承父级底色，与右侧一致 */
+      #downloadModal .left-pane { background-color: inherit !important; }
       #previewArea { background-color: var(--surface-muted) !important; }
       #cropBox { box-shadow: 0 0 0 9999px var(--overlay-scrim) !important; }
       #downloadModal select, #downloadModal input { background-color: var(--surface) !important; border-color: var(--border-strong) !important; color: var(--text-primary) !important; }
       #downloadModal .ratio-btn, #applyRatio, #closeDownload { background-color: var(--surface) !important; border-color: var(--border-strong) !important; color: var(--text-primary) !important; }
+      /* 保存按钮：统一粉色 #FBADBA（浅/深一致），文字统一深色以保证对比 */
+      #saveImage { background-color: #FBADBA !important; color: #111827 !important; border: 1px solid transparent !important; display: inline-flex; width: auto !important; }
+      #saveImage:hover { filter: brightness(0.97); }
+      html.dark #saveImage { background-color: #FBADBA !important; color: #111827 !important; border-color: transparent !important; }
+      html.dark #saveImage:hover { filter: brightness(0.95); }
       /* 页面内其他中性色按钮（非主按钮） */
       main button.rounded-full.border { background-color: var(--surface) !important; border-color: var(--border-strong) !important; color: var(--text-primary) !important; }
+      /* 深色模式下：详情页主按钮（下载/收藏）提升边框与文字对比度 */
+      html.dark #openDownload, html.dark main button.rounded-full.border { border-color: rgba(255,255,255,0.35) !important; color: rgba(255,255,255,0.95) !important; }
+      /* 深色模式：下载设置标题白色 */
+      html.dark #downloadModal h3 { color: #fff !important; }
       /* 相关推荐："前往"按钮与信息条样式与首页统一 */
       .overlay-bg { background-color: rgba(0,0,0,0.65) !important; border: 1px solid rgba(255,255,255,0.25) !important; }
+      /* 深色模式：相关推荐标题白色（提高权重并使用 !important）*/
+      html.dark #recommend h2 { color: #fff !important; }
     </style>
   </head>
   <body class="text-gray-900 dark:text-gray-100 min-h-screen">
@@ -134,8 +149,8 @@
           </aside>
         </div>
         <!-- 相关推荐：移入 main 内，紧随展示图与侧栏之后 -->
-        <section class="max-w-6xl mx-auto px-4 mt-4 pb-8">
-          <h2 class="text-base font-semibold mb-3">相关推荐</h2>
+        <section id="recommend" class="max-w-6xl mx-auto px-4 mt-4 pb-8">
+                <h2 class="text-base font-semibold mb-3">相关推荐</h2>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
             <!-- 卡片1 -->
             <a href="detail.html" class="group rounded-xl overflow-hidden shadow-soft border border-black/5 dark:border-white/10 bg-white/70 dark:bg-white/5 block">
@@ -208,7 +223,7 @@
       <div class="absolute inset-0 flex items-center justify-center p-4">
         <div class="w-full max-w-5xl rounded-2xl overflow-hidden shadow-soft border border-black/10 dark:border-white/10 grid grid-cols-1 lg:grid-cols-2">
           <!-- 左：图片预览与裁剪框 -->
-          <div class="relative">
+          <div class="relative left-pane">
             <div id="previewArea" class="relative m-4 rounded-lg overflow-hidden" style="height: min(60vh, 520px);">
               <div class="absolute inset-0 flex items-center justify-center text-xs opacity-70 select-none">图片预览（占位）</div>
               <div id="cropBox" class="absolute border-2 border-brand-600/90 cursor-move"></div>
@@ -218,7 +233,7 @@
           <div class="p-4 lg:p-6 space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="text-base font-semibold">下载设置</h3>
-              <button id="closeDownload" class="px-2 py-1 text-sm rounded border">关闭</button>
+               <button id="closeDownload" class="px-2 py-1 text-sm rounded border">关闭</button>
             </div>
             <div class="space-y-3 text-sm">
               <div>
@@ -253,8 +268,8 @@
               </div>
             </div>
             <div class="pt-2">
-              <button id="saveImage" class="w-full px-4 py-2 rounded-full bg-brand-600 hover:bg-brand-500 text-white text-sm shadow-soft">保存图片</button>
-            </div>
+              <button id="saveImage" class="px-4 py-2 rounded-full text-sm shadow-soft border">保存图片</button>
+             </div>
           </div>
         </div>
       </div>
@@ -364,6 +379,3 @@
 
   </body>
 </html>
-
-       /* 深色模式下：详情页主按钮（下载/收藏）提升边框与文字对比度 */
-       html.dark #openDownload, html.dark main button.rounded-full.border { border-color: rgba(255,255,255,0.35) !important; color: rgba(255,255,255,0.95) !important; }

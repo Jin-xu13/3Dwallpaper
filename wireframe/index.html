@@ -122,6 +122,72 @@
       .card { border-color: var(--border-soft) !important; background-color: var(--surface) !important; }
       #pagiBar { border-color: var(--border-strong) !important; background-color: var(--surface) !important; }
       #paginator button { border-color: var(--border-strong) !important; background-color: var(--surface) !important; }
+      /* 浅色模式：分页数字统一深色文字，选中页背景为 #FBADBA */
+      html:not(.dark) #paginator .page-btn { color: #111827 !important; }
+      html:not(.dark) #paginator .page-btn.active { background-color: #FBADBA !important; border-color: #FBADBA !important; color: #111827 !important; }
+      /* 深色模式：未选中页码文字为浅色，提高可读性 */
+      html.dark #paginator .page-btn { color: #F3F4F6 !important; }
+      /* 深色模式：选中页背景统一为 #FBADBA，文字为深色以提升可读性 */
+      html.dark #paginator .page-btn.active { background-color: #FBADBA !important; border-color: #FBADBA !important; color: #111827 !important; }
+      /* 深色模式：分页条背景 70% 透明深色 */
+      html.dark #pagiBar { background-color: rgba(0,0,0,0.70) !important; }
+      /* 深色模式：上一页/下一页/跳转按钮浅色文字 */
+      html.dark #pagiBar #prevBtn,
+      html.dark #pagiBar #nextBtn,
+      html.dark #pagiBar #gotoBtn { color: #F3F4F6 !important; }
+      /* 深色模式：分页信息文字浅色（共几页） */
+      html.dark #pagiBar span { color: #F3F4F6 !important; }
+      /* 深色模式：点击态（按下）不改背景，采用多层内阴影：向中心逐渐模糊且透明度逐渐增高（#FBADBA） */
+      html.dark #prevBtn:active,
+      html.dark #nextBtn:active,
+      html.dark #gotoBtn:active {
+        background-color: inherit !important;
+        box-shadow:
+          inset 0 0 6px 0 rgba(251, 173, 186, 0.25),
+          inset 0 0 12px 4px rgba(251, 173, 186, 0.35),
+          inset 0 0 20px 8px rgba(251, 173, 186, 0.50) !important;
+        color: inherit !important;
+      }
+      /* 浅色模式：点击态（按下）采用与深色一致的多层内阴影（#FBADBA） */
+      html:not(.dark) #prevBtn:active,
+      html:not(.dark) #nextBtn:active,
+      html:not(.dark) #gotoBtn:active {
+        background-color: inherit !important;
+        box-shadow:
+          inset 0 0 6px 0 rgba(251, 173, 186, 0.25),
+          inset 0 0 12px 4px rgba(251, 173, 186, 0.35),
+          inset 0 0 20px 8px rgba(251, 173, 186, 0.50) !important;
+        color: inherit !important;
+      }
+      
+      /* 动效：分页控件统一 box-shadow 过渡 */
+      #prevBtn, #nextBtn, #gotoBtn, #paginator .page-btn { transition: box-shadow .15s ease; }
+      /* 无障碍：键盘焦点可见时（深色模式）轻微内阴影强调 */
+      html.dark #prevBtn:focus-visible,
+      html.dark #nextBtn:focus-visible,
+      html.dark #gotoBtn:focus-visible { box-shadow: inset 0 0 6px 0 rgba(251, 173, 186, 0.25) !important; }
+      /* 深色模式：鼠标悬停时添加多层内阴影动效 */
+      html.dark #prevBtn:hover,
+      html.dark #nextBtn:hover,
+      html.dark #gotoBtn:hover {
+        background-color: inherit !important;
+        box-shadow:
+          inset 0 0 6px 0 rgba(251, 173, 186, 0.25),
+          inset 0 0 12px 4px rgba(251, 173, 186, 0.35),
+          inset 0 0 20px 8px rgba(251, 173, 186, 0.50) !important;
+        color: inherit !important;
+      }
+      /* 浅色模式：鼠标悬停时添加多层内阴影动效 */
+      html:not(.dark) #prevBtn:hover,
+      html:not(.dark) #nextBtn:hover,
+      html:not(.dark) #gotoBtn:hover {
+        background-color: inherit !important;
+        box-shadow:
+          inset 0 0 6px 0 rgba(251, 173, 186, 0.25),
+          inset 0 0 12px 4px rgba(251, 173, 186, 0.35),
+          inset 0 0 20px 8px rgba(251, 173, 186, 0.50) !important;
+        color: inherit !important;
+      }
       
       /* 令牌映射：圆角（全局轻量覆盖） */
       .rounded-xl { border-radius: var(--radius-lg) !important; }
@@ -267,9 +333,9 @@
 
         const createBtn = (n, isActive = false) => {
           const b = document.createElement('button');
-          b.className = 'px-2.5 py-1 rounded-full border text-sm ' + (isActive ? 'bg-brand-600 text-white border-brand-600' : '');
+          b.className = 'page-btn px-2.5 py-1 rounded-full border text-sm';
           b.textContent = String(n);
-          b.disabled = isActive;
+          if (isActive) { b.classList.add('active'); b.disabled = true; }
           if (!b.disabled) b.addEventListener('click', () => goToPage(n));
           return b;
         };
